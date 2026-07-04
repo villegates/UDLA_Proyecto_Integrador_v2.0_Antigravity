@@ -1,5 +1,6 @@
 # Configuración del Pipeline Olist
 rutas:
+  data_dir: "data"  # Carpeta raíz de los datos locales
   pagos: "data/olist_order_payments_dataset.csv"
   ordenes: "data/olist_orders_dataset.csv"
   clientes: "data/olist_customers_dataset.csv"
@@ -11,5 +12,10 @@ rutas:
   salida_criticas: "output/ordenes_criticas.csv"
   base_datos: "output/olist_analytics.db"
 
-apis:
-  mindicador_url: "https://mindicador.cl/api/dolar"
+# Cambiado a "api" (singular) y "url" para que calce con el código de extracción
+api:
+  url: "https://mindicador.cl/api/dolar"
+  factor_brl_usd: 0.19  # <-- Tu variable de prueba. Cámbiala a 0.19 cuando termines el test.
+  timeout: 10
+  retries: 3
+  retry_delay: 2
