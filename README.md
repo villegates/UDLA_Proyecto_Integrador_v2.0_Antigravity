@@ -69,5 +69,5 @@ Criterio y Cómo se cumple en este proyecto
 Funcionalidad (35%),Pipeline modular completo. Integra fuentes de datos híbridas (CSV de Olist + API externa) y genera 5 outputs listos para producción en /output.
 Calidad del código (30%),Uso profesional de loguru para trazabilidad física en pipeline.log. Validación estricta por contratos formales de datos empleando asserts verificados mediante pytest.
 Buenas prácticas (15%),"Desacoplamiento de rutas mediante config.yaml, uso seguro de entornos .env e Idempotencia Estricta (Validación por Representante: frena de forma segura si los reportes ya existen para cuidar cómputo)."
-Mecanismo Fallback,"Tolerancia a fallos: Ante caídas de red o latencia de la API externa, el sistema activa un valor hardcodeado de contingencia ($930.0 CLP) para garantizar la continuidad operativa."
+Mecanismo Fallback,"Tolerancia a fallos: Ante caídas de red o latencia de la API externa, el sistema activa un valor hardcodeado de contingencia ($180.0 CLP por Real) para garantizar la continuidad operativa sin romper el negocio."
 Presentación (20%),Despliegue en consola formateado simétricamente con respuestas directas a preguntas de negocio y reporte SQL Avanzado.
