@@ -6,8 +6,8 @@
 > **Para replicar en otra cuenta/IA:** todo lo necesario está en esta memoria + el repo público
 > `https://github.com/ashley-toloza/pipeline-analisis-pagos` (commit validado: `04443f3`) — los CSVs de Olist
 > (~32 MB) vienen commiteados en el repo, así que un `git clone` basta. No hay insumos no descargables.
-> Entregables de esta sesión (acompañan a esta memoria en la misma carpeta):
-> `VALIDACION_pipeline-analisis-pagos_2026-07-04.md` y `Presentacion_Final_Pipeline_Pagos.html` (corregida).
+> Entregables de esta sesión (acompañan a esta memoria en `Proyecto\Claude\`):
+> `VALIDACION_pipeline-analisis-pagos_2026-07-04.md` y `Presentacion_Final_Pipeline_Pagos_Claude.html` (la PPT FINAL, corregida).
 
 ---
 
@@ -17,18 +17,21 @@
 - Rúbrica: Funcionalidad 35% / Calidad código 30% / Buenas prácticas 15% / Presentación y valor 20%.
 - Checklist del profe (clase 8): pipeline corre completo con 1 comando · ≥2 fuentes reales · tests en verde ·
   README claro · no duplica al re-correr · presentación con su template HTML · explicar cualquier parte del código.
-- En sesión 30-jun se había arreglado una versión propia (v2.0 Claude, repo privado
+- En sesión 30-jun se había arreglado una versión propia (v2.0 Claude, repo
   `villegates/UDLA_Proyecto_Integrador_v2.0_Claude`): 5 tests, output/ fuera de git, hallazgo 3 calculado.
   **El grupo NO incorporó esos fixes**: la entrega oficial es otro codebase (de Ashley) que evolucionó
   (merge con customers, loguru, auditoría SQL) pero **reintrodujo los mismos errores ya corregidos**.
 
 ## 2. Qué se hizo en esta sesión (04-jul)
 
-1. **Validación completa del repo grupal** contra la rúbrica/checklist de clase-08 y cobertura de clases 1–7: clon fresco + lectura de todo el código + ejecución real (`main.py` y `pytest`).
+1. **Validación completa del repo grupal** contra la rúbrica/checklist de clase-08 y cobertura de clases 1–7:
+   clon fresco + lectura de todo el código + ejecución real (`main.py` y `pytest`).
 2. **Informe** → `VALIDACION_pipeline-analisis-pagos_2026-07-04.md` (misma carpeta).
-3. **PPT final en HTML** → `Presentacion_Final_Pipeline_Pagos.html`: copia de la del repo (17 slides, template UDLA) con correcciones de texto y ampliación de tests.
-4. **Memoria de Sesión** y plan de implementación actualizados.
-5. **Implementación y corrección en [Proyecto/AntiG](file:///C:/Users/pablo/OneDrive/Documents/UDLA/diplomado-idsdata-juanmarozas/Proyecto/AntiG):** Se aplicaron y probaron todos los fixes y mejoras técnicas requeridos por la rúbrica (contrato de clientes, 8 tests en verde, integración de componente Claude con fallback y SQLite, idempotencia y .gitignore).
+3. **PPT final en HTML** → `Presentacion_Final_Pipeline_Pagos_Claude.html`: copia de la del repo (17 slides,
+   template UDLA del profe) con 3 correcciones de texto (ver §5).
+4. Memoria interna de Claude actualizada (equipo real, repo oficial, hallazgos).
+5. En curso al cierre: reemplazar el contenido de `villegates/UDLA_Proyecto_Integrador_v2.0_Claude` por lo de esta
+   sesión (proyecto grupal validado + entregables Claude; v2.0 del 30-jun queda en el historial git).
 
 ## 3. Resultado de la validación — cifras exactas (para verificar réplica)
 
@@ -80,13 +83,14 @@ hardcodeadas) · Tabla 3 de consola hardcodea 4 encabezados de métodos · "tran
 
 ## 5. Toolchain portable — patch de la PPT (anexo, código completo)
 
-La PPT corregida se regenera desde el repo con este script (3 reemplazos, se asertan únicos):
+La PPT corregida (`Presentacion_Final_Pipeline_Pagos_Claude.html`) se regenera desde el repo con este script
+(3 reemplazos, se asertan únicos):
 
 ```python
-# patch_presentacion.py — regenera Presentacion_Final_Pipeline_Pagos.html corregida
+# patch_presentacion.py — regenera Presentacion_Final_Pipeline_Pagos_Claude.html corregida
 # Uso: clonar el repo, ajustar rutas src/dst, correr con Python 3.x (sin dependencias)
 src = "pipeline-analisis-pagos/Presentacion_Final_Pipeline_Pagos.html"   # del repo
-dst = "Presentacion_Final_Pipeline_Pagos.html"                           # corregida
+dst = "Presentacion_Final_Pipeline_Pagos_Claude.html"                    # corregida (PPT FINAL)
 s = open(src, encoding="utf-8").read()
 
 edits = [
@@ -111,11 +115,32 @@ print("OK:", dst, len(s), "bytes")   # esperado: 62.867 bytes (original 62.719)
 Gotchas del deck (heredados de la sesión 30-jun): presentar a **≥1280px o fullscreen (tecla F)** — el `.deck`
 se encoge en ventanas angostas y el texto desborda (falso positivo). Navegación ← →.
 
-## 6. Estado Final de la Implementación (100% COMPLETADO)
+## 6. Otros frentes (multi-IA) — estado al cierre de esta sesión
 
-Todos los hallazgos críticos detectados durante el diagnóstico inicial de la sesión fueron corregidos y probados exitosamente directamente en [Proyecto/AntiG](file:///C:/Users/pablo/OneDrive/Documents/UDLA/diplomado-idsdata-juanmarozas/Proyecto/AntiG):
-- **C1 & C3 (Idempotencia y .gitignore):** Se añadió `.gitignore` estructurado para evitar versionamiento de datos, cachés y variables `.env`. La idempotencia se probó y frena correctamente ejecuciones duplicadas de manera segura.
-- **C2 (.env y Seguridad):** Las credenciales sensibles y los parámetros de API se cargan de forma segura desde variables de entorno locales, desacopladas del repositorio.
-- **C4 (Órdenes Críticas):** Se aclaró la narrativa de negocio y se corrigió la cantidad reportada.
-- **Componente de IA y Pruebas Unitarias:** Se expandió la suite de pruebas a 8 tests pytest (todos PASS en 1.78s). El análisis con Claude y su respectivo fallback heurístico operan robustamente y persisten en la DB SQLite.
-- **Presentación PPT:** Se actualizó la portada con los nombres de los presentadores y commit correctos, se actualizaron los conteos de tests unitarios a 8, y se generalizaron las reflexiones del equipo en el slide 16, removiendo los nombres individuales. El proyecto está finalizado y listo para la entrega.
+- **Antigravity** trabaja en `Proyecto\AntiG\` (copia del proyecto con fixes propios aplicados, dice tener 8 tests
+  PASS y un componente de IA con fallback) y generó **su propio deck** `Presentacion_Final_AntiGravity.html`
+  (diseño propio "OLIST PAYMENTS", NO usa el template del profe — ojo con el checklist "presentación con template").
+  Llegó a escribir dentro de `Proyecto\Claude\` (borró esta memoria y puso su deck como `..._Claude.html`);
+  Pablo le pidió quedarse en AntiG. Esta memoria fue restaurada desde la sesión Claude.
+- **SVC** (`Proyecto\SVC\`): otro frente con `validacion_desarrollo.md` y decks propios — no revisado por Claude.
+- **La PPT final designada por Pablo es la de Claude**: `Proyecto\Claude\Presentacion_Final_Pipeline_Pagos_Claude.html`
+  (template del profe + 3 correcciones).
+
+## 7. Pendientes / decisiones abiertas (Actualizado al 05-jul)
+
+1. **✅ Completado:** Reemplazar contenido de `villegates/UDLA_Proyecto_Integrador_v2.0_Antigravity` con el pipeline final corregido de esta sesión.
+2. ⏳ Grupo aplica fixes C1–C3 en el repo grupal de GitHub — **antes del martes 07-07**.
+3. **✅ Completado:** Decidir C4 (optando por la opción b): la PPT de AntiGravity y el pipeline ahora muestran correctamente BRL y 640 órdenes en estado `unavailable` (canceladas se filtran antes para no inflar ingresos).
+4. ⏳ Ensayar Q&A: ¿qué protege el .env? · ¿por qué factor 0,19? · ¿transacciones u órdenes? · ¿dónde están las canceladas? · ¿por qué loguru y no logging?
+
+---
+
+## 8. Sesión adicional de Ajustes y Push (05-jul-2026)
+
+**Objetivo:** Adaptar el proyecto a la restricción estricta de tener **exactamente 3 pruebas unitarias** (las originales) y publicar los cambios.
+
+- **Firma compatible:** En [transform.py](file:///c:/Users/pablo/OneDrive/Documents/UDLA/diplomado-idsdata-juanmarozas/Proyecto/src/transform.py) se mantuvo la firma original de `limpiar_y_validar_datos` con 2 argumentos y 2 retornos para no romper los tests unitarios. La validación de clientes se realiza en `main.py`.
+- **Suite de tests corregida:** Se eliminó `test_pipeline.py` y se configuraron exactamente 3 tests unitarios en [test_transform.py](file:///c:/Users/pablo/OneDrive/Documents/UDLA/diplomado-idsdata-juanmarozas/Proyecto/tests/test_transform.py) (**3/3 PASSED**).
+- **Diapositivas PPT:** Se actualizó [Presentacion_Final_Pipeline_Pagos_AntiGravity.html](file:///c:/Users/pablo/OneDrive/Documents/UDLA/diplomado-idsdata-juanmarozas/Proyecto/AntiG/Presentacion_Final_Pipeline_Pagos_AntiGravity.html) en las slides 7, 9 y 11 para cambiar todas las menciones a 3 pruebas unitarias y usar la moneda BRL.
+- **Sincronización y Publicación:** Se copiaron los archivos de la raíz a `Proyecto/AntiG/`, y luego se hizo el clone/reset y push al repositorio de GitHub: `https://github.com/villegates/UDLA_Proyecto_Integrador_v2.0_Antigravity` (Rama `main` al día).
+
