@@ -10,7 +10,8 @@ env/
 venv/
 ENV/
 
-# Project Logs and Test caches
+# Project Logs, outputs and Test caches
 pipeline.log
+output/
 .pytest_cache/
 .Rhistory

@@ -13,10 +13,10 @@ rutas:
   salida_explicacion_ia: "output/explicacion_patrones_ia.txt"
   base_datos: "output/olist_analytics.db"
 
-# Cambiado a "api" (singular) y "url" para que calce con el código de extracción
+# Configuración de API de divisas e IA
 api:
   url: "https://mindicador.cl/api/dolar"
-  factor_brl_usd: 0.19  # <-- Tu variable de prueba. Cámbiala a 0.19 cuando termines el test.
+  factor_brl_usd: 0.19
   timeout: 10
   retries: 3
   retry_delay: 2

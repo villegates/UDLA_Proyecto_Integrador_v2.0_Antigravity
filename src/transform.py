@@ -90,12 +90,11 @@ def validar_contrato_clientes(df_c: pd.DataFrame) -> None:
 
 def limpiar_y_validar_datos(
     df_payments: pd.DataFrame, 
-    df_orders: pd.DataFrame,
-    df_customers: pd.DataFrame
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    df_orders: pd.DataFrame
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Capa de Transformación: Aísla datos corruptos, aplica filtros de negocio 
-    y ejecuta los contratos de datos de las tres tablas antes del análisis.
+    y ejecuta los contratos de datos de pagos y órdenes antes del análisis.
     """
     logger.info("🧹 Iniciando etapa de Transformación y Validación...")
 
@@ -122,18 +121,4 @@ def limpiar_y_validar_datos(
     # 4. EJECUCIÓN DEL CONTRATO DE ÓRDENES
     validar_contrato_ordenes(df_orders_limpio)
 
-    # 5. AISLAMIENTO Y LIMPIEZA DE CLIENTES
-    filtro_clientes_validos = (
-        df_customers["customer_id"].notna() &
-        df_customers["customer_state"].notna() &
-        df_customers["customer_state"].isin(ESTADOS_BRASIL)
-    )
-    df_customers_limpio = df_customers[filtro_clientes_validos].copy()
-    filas_clientes_invalidas = len(df_customers) - len(df_customers_limpio)
-    if filas_clientes_invalidas > 0:
-        logger.warning(f"   ↳ Se aislaron {filas_clientes_invalidas} filas de clientes con datos inválidos o nulos.")
-
-    # 6. EJECUCIÓN DEL CONTRATO DE CLIENTES
-    validar_contrato_clientes(df_customers_limpio)
-
-    return df_payments_limpio, df_orders_limpio, df_customers_limpio
+    return df_payments_limpio, df_orders_limpio

@@ -956,7 +956,7 @@
             </div>
             <div class="grid-card">
                 <div class="grid-card-title">TESTING: COBERTURA AUTOMATIZADA</div>
-                <p>Implementación de un conjunto sólido de <strong>8 pruebas unitarias con pytest</strong>, automatizando la verificación de datos sucios aislados, contratos de clientes, filtrado de canceladas, robustez de tipos e idempotencia.</p>
+                <p>Implementación de un conjunto de <strong>3 pruebas unitarias con pytest</strong>, automatizando la verificación de datos sucios aislados, filtrado de canceladas y validación estructural de tipos y columnas.</p>
             </div>
         </div>
         
@@ -997,22 +997,20 @@
                         <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
                         <span class="terminal-title">Terminal - Pipeline Olist</span>
                     </div>
-                    <div class="terminal-body">
-                        <span class="prompt">$</span> python -m pytest -v<br>
-                        <span class="output-green">✔ test_aislamiento_datos_sucios PASSED<br>
+                    <div class="terminal-body" style="font-size: 0.75rem; line-height: 1.3;">
+                        <span class="prompt">$</span> python -m pytest tests/<br>
+                        <span class="output-green">
+✔ test_aislamiento_datos_sucios PASSED<br>
 ✔ test_filtrado_ordenes_canceladas PASSED<br>
-✔ test_comportamiento_tipos_y_columnas PASSED<br>
-✔ test_contratos_datos_validos PASSED<br>
-✔ test_contratos_rechazan_datos_invalidos PASSED<br>
-✔ test_contratos_clientes_validos PASSED<br>
-✔ test_contratos_clientes_invalidos PASSED<br>
-✔ test_idempotencia_proceso PASSED</span><br>
-                        <span class="output-green"><b>====== 8 passed in 1.78s ======</b></span><br>
+✔ test_comportamiento_tipos_y_columnas PASSED</span><br>
+                        <span class="output-green"><b>====== 3 passed in 1.25s ======</b></span><br>
                         <span class="prompt">$</span> python main.py<br>
-                        <span class="output-cyan">INFO  | Conectando con API de cambio... Fallback si falla.</span><br>
-                        <span class="output-cyan">INFO  | Se aislaron 11 filas de transacciones corruptas</span><br>
-                        <span class="output-cyan">INFO  | Se excluyeron 625 órdenes canceladas del pipeline</span><br>
-                        <span class="output-green">SUCCESS | Pipeline ejecutado correctamente. Reporte guardado.</span><br>
+                        <span class="output-cyan">INFO  | 🔐 Archivo .env detectado. Resguardando credenciales...</span><br>
+                        <span class="output-cyan">INFO  | Ingesta: Los 3 datasets de Olist cargados exitosamente.</span><br>
+                        <span class="output-green">SUCCESS | API de cambio: 1 BRL ≈ $175.12 CLP</span><br>
+                        <span class="output-cyan">INFO  | Calidad: Se aislaron 11 filas inválidas de pagos.</span><br>
+                        <span class="output-green">SUCCESS | SQLite: Tablas de base de datos estructuradas con éxito.</span><br>
+                        <span class="output-green">SUCCESS | DB AUDIT PASSED: Archivo 'olist_analytics.db' verificado.</span><br>
                         <span class="prompt">$</span> python main.py<br>
                         <span class="output-red">WARNING | El reporte ejecutivo ya existe. Deteniendo ejecución.</span>
                     </div>
@@ -1021,7 +1019,7 @@
             <div class="split-col">
                 <div class="card-header border-gold">CONTROL DE FLUJO Y CALIDAD</div>
                 <ul class="bullet-list">
-                    <li><strong>8 Tests Unitarios en verde:</strong> Garantizan el filtrado estricto de canceladas, limpieza de anomalías, contratos de clientes e idempotencia.</li>
+                    <li><strong>3 Tests Unitarios en verde:</strong> Garantizan el filtrado estricto de canceladas, la limpieza de anomalías y el comportamiento de tipos y columnas.</li>
                     <li><strong>Aislamiento de Registros Sucios:</strong> Se detectan y extraen 11 filas defectuosas para auditoría sin detener el flujo general del negocio.</li>
                     <li><strong>Idempotencia Validada:</strong> El guard integrado en el script principal evita reprocesar y malgastar recursos de cómputo si el reporte ya está generado.</li>
                 </ul>
@@ -1064,7 +1062,7 @@
         <div class="kpi-title">DOMINANCIA DEL CRÉDITO</div>
         <div class="kpi-desc">
             • Representa 76,349 de las 103,214 transacciones válidas analizadas.<br>
-            • Ticket promedio de $163.00 USD, significativamente superior al de los otros métodos.
+            • Ticket promedio de $163.00 BRL, significativamente superior al de los otros métodos.
         </div>
     </div>
     <div class="kpi-card">

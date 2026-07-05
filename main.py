@@ -13,7 +13,7 @@ if str(BASE) not in sys.path:
     sys.path.insert(0, str(BASE))
 
 from src.extract import cargar_datos_pagos, obtener_tipo_cambio_dolar
-from src.transform import limpiar_y_validar_datos
+from src.transform import limpiar_y_validar_datos, validar_contrato_clientes
 from src.pipeline import generar_analisis_pagos, responder_preguntas_negocio
 
 def configurar_logs():
@@ -76,11 +76,12 @@ def ejecutar_pipeline():
     valor_dolar = obtener_tipo_cambio_dolar(config)
     
     # 2. Capa de Transformación (Limpieza y Validación de Contratos)
-    df_p_limpio, df_o_limpio, df_c_limpio = limpiar_y_validar_datos(df_pagos, df_ordenes, df_clientes)
+    validar_contrato_clientes(df_clientes)
+    df_p_limpio, df_o_limpio = limpiar_y_validar_datos(df_pagos, df_ordenes)
     
     # 3. Capa de Analítica Avanzada y Carga Múltiple (Los 6 Outputs)
     reporte_final, df_completo, pagos_por_metodo, rendimiento_estado_pago, explicacion_ia = generar_analisis_pagos(
-        df_p_limpio, df_o_limpio, df_c_limpio, valor_dolar, config, BASE
+        df_p_limpio, df_o_limpio, df_clientes, valor_dolar, config, BASE
     )
     
     # 4. Despliegue Visual del Reporte de Negocios en Consola
