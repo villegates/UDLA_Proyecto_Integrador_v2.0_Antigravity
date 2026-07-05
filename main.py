@@ -76,15 +76,22 @@ def ejecutar_pipeline():
     valor_dolar = obtener_tipo_cambio_dolar(config)
     
     # 2. Capa de Transformación (Limpieza y Validación de Contratos)
-    df_p_limpio, df_o_limpio = limpiar_y_validar_datos(df_pagos, df_ordenes)
+    df_p_limpio, df_o_limpio, df_c_limpio = limpiar_y_validar_datos(df_pagos, df_ordenes, df_clientes)
     
-    # 3. Capa de Analítica Avanzada y Carga Múltiple (Los 5 Outputs)
-    reporte_final, df_completo, pagos_por_metodo, rendimiento_estado_pago = generar_analisis_pagos(
-        df_p_limpio, df_o_limpio, df_clientes, valor_dolar, config, BASE
+    # 3. Capa de Analítica Avanzada y Carga Múltiple (Los 6 Outputs)
+    reporte_final, df_completo, pagos_por_metodo, rendimiento_estado_pago, explicacion_ia = generar_analisis_pagos(
+        df_p_limpio, df_o_limpio, df_c_limpio, valor_dolar, config, BASE
     )
     
     # 4. Despliegue Visual del Reporte de Negocios en Consola
     responder_preguntas_negocio(reporte_final, df_completo, pagos_por_metodo, rendimiento_estado_pago)
+
+    # 4b. NUEVO: Despliegue de la Síntesis / Reporte de IA
+    print("\n" + "="*105)
+    print("                    🤖 REPORTE DE SÍNTESIS INTELIGENTE (IA / CLAUDE)              ")
+    print("="*105)
+    print(explicacion_ia)
+    print("="*105 + "\n")
 
     # 5. NUEVO: Consulta SQL Avanzada de Auditoría (No toca los DataFrames del negocio)
     logger.info("🛡️ Iniciando auditoría analítica de consistencia relacional en SQLite...")

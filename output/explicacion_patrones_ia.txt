@@ -1,0 +1,4 @@
+--- SÍNTESIS DE NEGOCIO (FALLBACK ANALÍTICO LOCAL) ---
+El análisis del canal financiero de Olist revela una hegemonía del crédito, donde las transacciones con tarjeta de crédito representan el 74.0% del volumen operativo, concentrando la mayor parte de la liquidez del ecommerce. Esto indica una alta dependencia de las pasarelas bancarias y los plazos de cuotas para sostener la compra de tickets promedio elevados.
+
+Por otro lado, el método de Boleto Bancario representa un considerable 19.1% de las transacciones. La persistencia de esta opción en efectivo refleja la brecha de inclusión financiera existente en el mercado brasileño, particularmente en estados del interior. Estratégicamente, se recomienda optimizar las comisiones por adquirencia con los proveedores de tarjeta de crédito (nuestro mayor pilar transaccional) e implementar campañas para digitalizar compradores recurrentes de boleto.

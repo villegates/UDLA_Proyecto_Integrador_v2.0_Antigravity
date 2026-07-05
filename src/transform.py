@@ -6,6 +6,13 @@ from loguru import logger
 # --- Aseguramos rutas relativas ---
 BASE_TRANSFORM = Path(__file__).resolve().parent.parent
 
+# Conjunto de 27 estados oficiales de Brasil
+ESTADOS_BRASIL = {
+    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
+    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
+    "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+}
+
 def validar_contrato_pagos(df_p: pd.DataFrame) -> None:
     """
     Lanza un AssertionError claro si los datos de pagos no cumplen las expectativas.
@@ -28,6 +35,10 @@ def validar_contrato_pagos(df_p: pd.DataFrame) -> None:
     # Regla 4: Las cuotas (installments) deben ser de al menos 1
     assert (df_p["payment_installments"] >= 1).all(), "Hay registros con cuotas menores a 1"
 
+    # Regla 5: No se permiten valores nulos en columnas clave
+    for col in columnas_clave:
+        assert df_p[col].notna().all(), f"La columna {col} contiene valores nulos en pagos"
+
     logger.success("✅ Validación OK: El dataset de pagos cumple el contrato formal.")
 
 
@@ -45,32 +56,84 @@ def validar_contrato_ordenes(df_o: pd.DataFrame) -> None:
     # Regla 2: No deben existir órdenes duplicadas (order_id debe ser llave primaria única)
     assert not df_o["order_id"].duplicated().any(), "Hay order_id duplicados en el dataset de órdenes"
 
+    # Regla 3: No se permiten valores nulos en columnas clave
+    for col in columnas_clave:
+        assert df_o[col].notna().all(), f"La columna {col} contiene valores nulos en órdenes"
+
     logger.success("✅ Validación OK: El dataset de órdenes cumple el contrato formal.")
 
 
-def limpiar_y_validar_datos(df_payments: pd.DataFrame, df_orders: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+def validar_contrato_clientes(df_c: pd.DataFrame) -> None:
+    """
+    Lanza un AssertionError si el dataset de clientes viola el contrato estructural o de negocio.
+    """
+    logger.info("🔍 Validando contrato de calidad en datos de Clientes...")
+
+    # Regla 1: Columnas requeridas para los cruces de tablas
+    columnas_clave = {"customer_id", "customer_state"}
+    faltan = columnas_clave - set(df_c.columns)
+    assert not faltan, f"Faltan columnas obligatorias en clientes: {faltan}"
+
+    # Regla 2: El customer_id debe ser llave primaria única
+    assert not df_c["customer_id"].duplicated().any(), "Hay customer_id duplicados en el dataset de clientes"
+
+    # Regla 3: El estado geográfico debe ser una sigla válida de Brasil
+    assert df_c["customer_state"].isin(ESTADOS_BRASIL).all(), \
+        "Hay códigos de estado geográfico inválidos o desconocidos en el dataset de clientes"
+
+    # Regla 4: No se permiten valores nulos en columnas clave
+    for col in columnas_clave:
+        assert df_c[col].notna().all(), f"La columna {col} contiene valores nulos en clientes"
+
+    logger.success("✅ Validación OK: El dataset de clientes cumple el contrato formal.")
+
+
+def limpiar_y_validar_datos(
+    df_payments: pd.DataFrame, 
+    df_orders: pd.DataFrame,
+    df_customers: pd.DataFrame
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Capa de Transformación: Aísla datos corruptos, aplica filtros de negocio 
-    y ejecuta los contratos de datos antes de permitir el paso al análisis.
+    y ejecuta los contratos de datos de las tres tablas antes del análisis.
     """
     logger.info("🧹 Iniciando etapa de Transformación y Validación...")
 
     # 1. AISLAMIENTO Y LIMPIEZA DE PAGOS (Valores válidos)
-    filtro_pagos_validos = (df_payments["payment_value"] > 0) & (df_payments["payment_installments"] >= 1)
+    filtro_pagos_validos = (
+        df_payments["payment_value"].notna() & 
+        (df_payments["payment_value"] > 0) & 
+        df_payments["payment_installments"].notna() & 
+        (df_payments["payment_installments"] >= 1)
+    )
     df_payments_limpio = df_payments[filtro_pagos_validos].copy()
     
     filas_invalidas = len(df_payments) - len(df_payments_limpio)
     if filas_invalidas > 0:
         logger.warning(f"   ↳ Se aislaron {filas_invalidas} filas inválidas en pagos (valores <= 0 o vacíos).")
 
-    # 2. EJECUCIÓN DEL CONTRATO DE PAGOS (Asserts del profesor)
+    # 2. EJECUCIÓN DEL CONTRATO DE PAGOS
     validar_contrato_pagos(df_payments_limpio)
 
     # 3. FILTRADO ESTRATÉGICO DE ÓRDENES (Excluir canceladas para no inflar métricas)
     df_orders_limpio = df_orders[df_orders["order_status"] != "canceled"].copy()
     logger.info(f"   ↳ Órdenes procesadas: {len(df_orders_limpio)} válidas de un total de {len(df_orders)}.")
 
-    # 4. EJECUCIÓN DEL CONTRATO DE ÓRDENES (Asserts del profesor)
+    # 4. EJECUCIÓN DEL CONTRATO DE ÓRDENES
     validar_contrato_ordenes(df_orders_limpio)
 
-    return df_payments_limpio, df_orders_limpio
+    # 5. AISLAMIENTO Y LIMPIEZA DE CLIENTES
+    filtro_clientes_validos = (
+        df_customers["customer_id"].notna() &
+        df_customers["customer_state"].notna() &
+        df_customers["customer_state"].isin(ESTADOS_BRASIL)
+    )
+    df_customers_limpio = df_customers[filtro_clientes_validos].copy()
+    filas_clientes_invalidas = len(df_customers) - len(df_customers_limpio)
+    if filas_clientes_invalidas > 0:
+        logger.warning(f"   ↳ Se aislaron {filas_clientes_invalidas} filas de clientes con datos inválidos o nulos.")
+
+    # 6. EJECUCIÓN DEL CONTRATO DE CLIENTES
+    validar_contrato_clientes(df_customers_limpio)
+
+    return df_payments_limpio, df_orders_limpio, df_customers_limpio

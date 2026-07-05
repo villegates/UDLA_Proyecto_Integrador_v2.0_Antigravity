@@ -33,9 +33,9 @@ python -m pytest tests/ -v
 # 5. Ver reportes analíticos en la carpeta output/ y logs técnicos en pipeline.log
 
 Estructura Real del Proyecto
-├── main.py              # Orquestador global (Punto de entrada y auditoría SQL)
+├── main.py              # Orquestador global (Punto de entrada, despliegue e informe SQL)
 ├── config.yaml          # Configuración estructural de rutas y endpoints
-├── .env                 # Resguardo seguro de credenciales sensibles
+├── .env                 # Resguardo seguro de credenciales sensibles (API_AUTH_TOKEN, ANTHROPIC_API_KEY)
 ├── pipeline.log         # Historial perimetral de logs técnicos (Loguru)
 ├── requirements.txt     # Dependencias de librerías del proyecto
 ├── README.md            # Documentación del sistema
@@ -48,26 +48,28 @@ Estructura Real del Proyecto
 │   ├── ordenes_criticas.csv     # Reporte de órdenes canceladas (Output 4)
 │   ├── pagos_por_metodo.csv     # Métricas por tipo de pago (Output 2)
 │   ├── rendimiento_por_estado.csv # Matriz cruzada Estado vs Método (Output 3)
-│   └── resumen_ejecutivo.csv    # Ventas generales por Estado (Output 1)
+│   ├── resumen_ejecutivo.csv    # Ventas generales por Estado (Output 1)
+│   └── explicacion_patrones_ia.txt # Reporte explicativo generado por IA / Fallback local (Output 6)
 ├── src/                 # Código fuente modularizado del ETL
 │   ├── extract.py       # Extracción local con reintentos + API de tipo de cambio
-│   ├── transform.py     # Capa de limpieza y validación de contratos formales
-│   └── pipeline.py      # Procesamiento analítico, outputs e insights de negocio
+│   ├── transform.py     # Capa de limpieza y validación de contratos formales (pagos, órdenes y clientes)
+│   └── pipeline.py      # Procesamiento analítico, componente de IA e insights de negocio
 └── tests/               # Suite de pruebas unitarias
-    └── test_transform.py # Tests automatizados para las reglas de transformación
+    ├── test_transform.py # Tests automatizados para contratos formales de las 3 tablas y nulos
+    └── test_pipeline.py  # Tests para agrupaciones analíticas e integridad del pipeline
 
 🧪 Pruebas Unitarias (Testing)
-El proyecto incluye pruebas automatizadas desarrolladas con pytest ubicadas en la carpeta tests/test_transform.py. Estas pruebas se encargan de validar la consistencia de la capa de transformación, asegurando que:
-
-Las funciones de limpieza detecten y aíslen correctamente registros con montos menores o iguales a cero (payment_value <= 0).
-
-Se cumplan estrictamente las restricciones y los contratos formales de datos (data contracts) diseñados para las estructuras de las tablas de Olist antes de permitir su análisis.
+El proyecto incluye un total de 8 pruebas unitarias desarrolladas con pytest distribuidas en la carpeta tests/. Estas pruebas se encargan de validar la consistencia del pipeline completo, asegurando que:
+1. Las funciones de limpieza de `transform.py` aíslen registros con montos menores o iguales a cero (payment_value <= 0) o cuotas inválidas.
+2. Se cumplan estrictamente los contratos formales de datos (data contracts) diseñados para pagos, órdenes y clientes (incluyendo códigos de estado válidos de Brasil).
+3. Se rechacen valores nulos en columnas críticas en los 3 datasets.
+4. El pipeline analítico realice correctamente las agrupaciones y las ponderaciones de porcentaje de uso por estado sumen exactamente 100%.
 
 Rúbrica y Robustez
 
 Criterio y Cómo se cumple en este proyecto
-Funcionalidad (35%),Pipeline modular completo. Integra fuentes de datos híbridas (CSV de Olist + API externa) y genera 5 outputs listos para producción en /output.
-Calidad del código (30%),Uso profesional de loguru para trazabilidad física en pipeline.log. Validación estricta por contratos formales de datos empleando asserts verificados mediante pytest.
+Funcionalidad (35%),Pipeline modular completo. Integra fuentes de datos híbridas (CSV de Olist + API externa) y genera 6 outputs listos para producción en /output.
+Calidad del código (30%),Uso profesional de loguru para trazabilidad física en pipeline.log. Validación estricta por contratos formales de datos empleando asserts verificados mediante 8 tests unitarios con pytest.
 Buenas prácticas (15%),"Desacoplamiento de rutas mediante config.yaml, uso seguro de entornos .env e Idempotencia Estricta (Validación por Representante: frena de forma segura si los reportes ya existen para cuidar cómputo)."
-Mecanismo Fallback,"Tolerancia a fallos: Ante caídas de red o latencia de la API externa, el sistema activa un valor hardcodeado de contingencia ($180.0 CLP por Real) para garantizar la continuidad operativa sin romper el negocio."
-Presentación (20%),Despliegue en consola formateado simétricamente con respuestas directas a preguntas de negocio y reporte SQL Avanzado.
+Mecanismo Fallback,"Tolerancia a fallos doble: 1) Ante caídas de red o latencia de la API de tipo de cambio, el sistema activa un valor de contingencia ($180.0 CLP por Real); 2) Ante la falta de ANTHROPIC_API_KEY, la IA cae a un análisis heurístico local estructurado para generar la explicación de negocio."
+Presentación (20%),Despliegue en consola formateado simétricamente con respuestas directas a preguntas de negocio, reporte SQL Avanzado y análisis descriptivo de IA.

@@ -5,11 +5,12 @@ rutas:
   ordenes: "data/olist_orders_dataset.csv"
   clientes: "data/olist_customers_dataset.csv"
   
-  # Los 5 Outputs requeridos por la rúbrica del profesor
+  # Los 5 Outputs requeridos por la rúbrica del profesor + Reporte de IA
   salida_reporte: "output/resumen_ejecutivo.csv"
   salida_pagos: "output/pagos_por_metodo.csv"
   salida_estados: "output/rendimiento_por_estado.csv"
   salida_criticas: "output/ordenes_criticas.csv"
+  salida_explicacion_ia: "output/explicacion_patrones_ia.txt"
   base_datos: "output/olist_analytics.db"
 
 # Cambiado a "api" (singular) y "url" para que calce con el código de extracción
@@ -19,3 +20,5 @@ api:
   timeout: 10
   retries: 3
   retry_delay: 2
+  model: "claude-haiku-4-5-20251001"
+  max_tokens: 350

@@ -1,6 +1,9 @@
+import os
 import sqlite3
 from pathlib import Path
 import pandas as pd
+import httpx
+import anthropic
 from loguru import logger
 
 # Diccionario oficial de mapeo para traducir las siglas de Brasil a nombres completos
@@ -14,10 +17,114 @@ MAPEO_ESTADOS = {
     "SE": "Sergipe", "SP": "São Paulo", "TO": "Tocantins"
 }
 
+
+def explicar_patrones_con_ia(
+    pagos_por_metodo: pd.DataFrame, 
+    rendimiento_estado_pago: pd.DataFrame, 
+    config: dict, 
+    base_path: Path
+) -> str:
+    """
+    Componente de IA del Pipeline (Clase 7 / Unidad 3):
+    Envía los datos de transacciones a Claude para resumir patrones de negocio.
+    Implementa un mecanismo de Fallback local robusto en caso de que no haya API key.
+    """
+    logger.info("🤖 Iniciando componente de análisis estratégico con IA...")
+    
+    # 1. Preparar el resumen de datos para el prompt
+    resumen_pagos = pagos_por_metodo.to_string(index=False)
+    resumen_estados = rendimiento_estado_pago.head(5).to_string(index=False) # Tomamos los top 5
+    
+    prompt = (
+        "Eres un analista de negocios financiero experto en ecommerce.\n"
+        "Analiza el siguiente resumen del rendimiento de métodos de pago de Olist Brasil:\n\n"
+        "MÉTRICAS POR MÉTODO DE PAGO:\n"
+        f"{resumen_pagos}\n\n"
+        "MUESTRA DE COMPORTAMIENTO GEOGRÁFICO (TOP 5 ESTADOS):\n"
+        f"{resumen_estados}\n\n"
+        "Instrucciones de respuesta:\n"
+        "1. Genera una explicación ejecutiva concisa (máximo 200 palabras) sobre los patrones de pago detectados.\n"
+        "2. Identifica el método de pago dominante y su impacto en las comisiones de pasarela de pago.\n"
+        "3. Comenta la brecha de bancarización reflejada en el uso de boleto (efectivo) vs tarjeta de crédito.\n"
+        "4. Responde con un tono formal para la gerencia, sin rodeos de saludo ni introducciones vacías."
+    )
+    
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    explicacion = ""
+    
+    if api_key and api_key.strip() and not api_key.startswith("sk-ant-tu-llave"):
+        try:
+            model = config.get("api", {}).get("model", "claude-haiku-4-5-20251001")
+            max_tokens = config.get("api", {}).get("max_tokens", 350)
+            
+            logger.info(f"   ↳ Consultando API externa de Anthropic (Modelo: {model})...")
+            cliente = anthropic.Anthropic(
+                api_key=api_key,
+                http_client=httpx.Client(verify=False),
+            )
+            respuesta = cliente.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            explicacion = respuesta.content[0].text.strip()
+            logger.success("✅ IA exitosa: Claude generó el reporte ejecutivo de patrones.")
+        except Exception as e:
+            logger.warning(f"⚠️ Error al conectar con la API de IA: {e}. Activando plan de contingencia...")
+            
+    if not explicacion:
+        # Mecanismo de contingencia (Fallback local robusto)
+        logger.info("   ↳ Ejecutando fallback analítico local (Cómputo Heurístico)...")
+        
+        # Calcular dinámicamente algunos datos clave para el fallback
+        total_transacciones = pagos_por_metodo["cantidad_usos"].sum()
+        tarjeta_data = pagos_por_metodo[pagos_por_metodo["payment_type"] == "credit_card"].iloc[0]
+        boleto_data = pagos_por_metodo[pagos_por_metodo["payment_type"] == "boleto"].iloc[0]
+        
+        pct_tarjeta = (tarjeta_data["cantidad_usos"] / total_transacciones) * 100
+        pct_boleto = (boleto_data["cantidad_usos"] / total_transacciones) * 100
+        
+        explicacion = (
+            "--- SÍNTESIS DE NEGOCIO (FALLBACK ANALÍTICO LOCAL) ---\n"
+            f"El análisis del canal financiero de Olist revela una hegemonía del crédito, "
+            f"donde las transacciones con tarjeta de crédito representan el {pct_tarjeta:.1f}% del volumen operativo, "
+            f"concentrando la mayor parte de la liquidez del ecommerce. Esto indica una alta dependencia de las pasarelas bancarias "
+            f"y los plazos de cuotas para sostener la compra de tickets promedio elevados.\n\n"
+            f"Por otro lado, el método de Boleto Bancario representa un considerable {pct_boleto:.1f}% de las transacciones. "
+            f"La persistencia de esta opción en efectivo refleja la brecha de inclusión financiera existente en el mercado brasileño, "
+            f"particularmente en estados del interior. Estratégicamente, se recomienda optimizar las comisiones por adquirencia con los "
+            f"proveedores de tarjeta de crédito (nuestro mayor pilar transaccional) e implementar campañas para digitalizar "
+            f"compradores recurrentes de boleto."
+        )
+        logger.success("✅ Fallback completado: Síntesis de auditoría local generada correctamente.")
+
+    # Guardar Físicamente en Carpeta /output (Output 6)
+    ruta_txt = base_path / config["rutas"]["salida_explicacion_ia"]
+    ruta_txt.parent.mkdir(parents=True, exist_ok=True)
+    with open(ruta_txt, "w", encoding="utf-8") as f:
+        f.write(explicacion)
+    logger.success(f"💾 Output 6 (Explicación de IA/Fallback) guardada en: {config['rutas']['salida_explicacion_ia']}")
+
+    # Guardar en Base de Datos SQLite (Tabla auditoria_patrones_ia)
+    ruta_db = base_path / config["rutas"]["base_datos"]
+    try:
+        conn = sqlite3.connect(ruta_db)
+        try:
+            df_ia = pd.DataFrame([{"tipo_analisis": "IA_SINTESIS", "contenido": explicacion}])
+            df_ia.to_sql("auditoria_patrones_ia", conn, if_exists="replace", index=False)
+        finally:
+            conn.close()
+        logger.success("✅ SQLite actualizado: Análisis de patrones guardado en tabla 'auditoria_patrones_ia'.")
+    except Exception as e:
+        logger.error(f"❌ Error al guardar el análisis de IA en SQLite: {e}")
+        
+    return explicacion
+
+
 def generar_analisis_pagos(df_payments: pd.DataFrame, df_orders: pd.DataFrame, df_customers: pd.DataFrame, valor_dolar: float, config: dict, base_path: Path):
     """
-    Cruza las fuentes de datos, integra conversión por API y genera los 5 outputs
-    (4 CSVs + 1 DB SQLite), utilizando la divisa correcta (BRL) para los montos base.
+    Cruza las fuentes de datos, integra conversión por API y genera los 6 outputs
+    (4 CSVs + 1 DB SQLite + 1 Explicación de IA), utilizando la divisa correcta (BRL) para los montos base.
     """
     logger.info("🧠 Procesando cruces de datos (Merges) y analítica avanzada...")
     
@@ -30,14 +137,14 @@ def generar_analisis_pagos(df_payments: pd.DataFrame, df_orders: pd.DataFrame, d
     
     # --- 3. Generación de las 4 Tablas de Reportes (Outputs) ---
     
-    # Output 1: Resumen Ejecutivo por Estado (CORREGIDO: USD pasa a BRL)
+    # Output 1: Resumen Ejecutivo por Estado
     resumen_ejecutivo = df_completo.groupby("customer_state").agg(
         total_ingresos_brl=("payment_value", "sum"),
         total_ingresos_clp=("payment_value_clp", "sum"),
         transacciones=("order_id", "count")
     ).reset_index()
     
-    # Output 2: Métricas por tipo de Pago (CORREGIDO: USD pasa a BRL)
+    # Output 2: Métricas por tipo de Pago
     pagos_por_metodo = df_completo.groupby("payment_type").agg(
         monto_total_brl=("payment_value", "sum"),
         monto_total_clp=("payment_value_clp", "sum"),
@@ -72,15 +179,23 @@ def generar_analisis_pagos(df_payments: pd.DataFrame, df_orders: pd.DataFrame, d
     ruta_db = base_path / config["rutas"]["base_datos"]
     logger.info(f"🗄️ Inyectando tablas en la Base de Datos Relacional: {ruta_db.name}...")
     
-    with sqlite3.connect(ruta_db) as conn:
+    conn = sqlite3.connect(ruta_db)
+    try:
         resumen_ejecutivo.to_sql("resumen_ejecutivo", conn, if_exists="replace", index=False)
         pagos_por_metodo.to_sql("pagos_por_metodo", conn, if_exists="replace", index=False)
         rendimiento_estado_pago.to_sql("rendimiento_estado_pago", conn, if_exists="replace", index=False)
         ordenes_criticas.to_sql("ordenes_criticas", conn, if_exists="replace", index=False)
+    finally:
+        conn.close()
         
     logger.success("✅ Output 5 (Base de Datos SQLite relacional) estructurada con éxito.")
     
-    return resumen_ejecutivo, df_completo, pagos_por_metodo, rendimiento_estado_pago
+    # Output 6: Explicación de Patrones con IA / Fallback
+    explicacion_ia = explicar_patrones_con_ia(
+        pagos_por_metodo, rendimiento_estado_pago, config, base_path
+    )
+    
+    return resumen_ejecutivo, df_completo, pagos_por_metodo, rendimiento_estado_pago, explicacion_ia
 
 def responder_preguntas_negocio(resumen_ejecutivo: pd.DataFrame, df_completo: pd.DataFrame, pagos_por_metodo: pd.DataFrame, rendimiento_estado_pago: pd.DataFrame):
     """
