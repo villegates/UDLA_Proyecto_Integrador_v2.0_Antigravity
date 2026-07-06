@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación Final Olist - Versión v2.0 (AntiGravity)</title>
+    <style>
+        /* CSS RESET & VARIABLES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg-dark: #121824;
+            --bg-light: #F7F9FC;
+            --sidebar-bg: #1A2232;
+            --accent-gold: #D4AF37;
+            --accent-gold-hover: #AA8B2C;
+            --text-light: #ECEFF4;
+            --text-dark: #2E3440;
+            --text-muted: #707E94;
+            --card-bg: #FFFFFF;
+            --card-border: #E5E9F0;
+            --green-accent: #2ECC71;
+            --red-accent: #E74C3C;
+            --blue-accent: #3498DB;
+            --font-title: 'Georgia', serif;
+            --font-body: 'Arial', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            background-color: var(--bg-dark);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+        }
+
+        /* PRESENTATION LAYOUT */
+        .presentation-wrapper {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* LEFT SIDEBAR NAVIGATION */
+        .sidebar {
+            width: 240px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            font-family: var(--font-title);
+            color: var(--accent-gold);
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-align: center;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 15px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-item .num {
+            color: var(--accent-gold);
+            font-family: var(--font-title);
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .sidebar-item.active {
+            color: var(--text-light);
+            background-color: rgba(212, 175, 55, 0.1);
+            border-left: 3px solid var(--accent-gold);
+        }
+
+        .sidebar-item.active .num {
+            opacity: 1;
+        }
+
+        .sidebar-footer {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-align: center;
+            line-height: 1.4;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* SLIDES CONTAINER */
+        .slides-container {
+            flex-grow: 1;
+            height: 100vh;
+            position: relative;
+            background-color: var(--bg-light);
+            overflow: hidden;
+        }
+
+        /* SLIDE ENGINE CLASSES */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            padding: 40px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 20;
+        }
+
+        /* SLIDE TEMPLATE SCHEMES */
+        .slide.dark {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+
+        .slide.light {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* TITLE SLIDE AND DIVIDER STYLE */
+        .title-slide {
+            background: linear-gradient(135deg, #121824 0%, #1c273a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            text-align: left;
+            padding-left: 10% !important;
+        }
+
+        .logo-udla {
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .main-title {
+            font-family: var(--font-title);
+            font-size: 3rem;
+            line-height: 1.2;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            max-width: 850px;
+            border-bottom: 3px solid var(--accent-gold);
+            padding-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 700px;
+        }
+
+        .meta-container {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .repo-link {
+            color: var(--accent-gold);
+            font-family: monospace;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* SECTION DIVIDER SLIDE */
+        .divider-slide {
+            background: linear-gradient(135deg, #121824 0%, #0d121c 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .section-num {
+            color: var(--accent-gold);
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-family: var(--font-title);
+            font-size: 2.75rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .section-desc {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* CONTENT SLIDE LAYOUT ELEMENTS */
+        .slide-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .slide-title {
+            font-family: var(--font-title);
+            font-size: 1.85rem;
+            color: var(--bg-dark);
+            border-left: 5px solid var(--accent-gold);
+            padding-left: 15px;
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+
+        .slide.dark .slide-title {
+            color: var(--text-light);
+        }
+
+        .slide-content-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* SPLIT COLUMNS */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .split-col {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card-header {
+            font-weight: bold;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--card-border);
+            margin-bottom: 10px;
+        }
+
+        .border-red { border-color: var(--red-accent); color: var(--red-accent); }
+        .border-green { border-color: var(--green-accent); color: var(--green-accent); }
+        .border-blue { border-color: var(--blue-accent); color: var(--blue-accent); }
+        .border-gold { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+        /* BULLET LISTS */
+        .bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 20px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .bullet-list li::before {
+            content: "▪";
+            position: absolute;
+            left: 0;
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+            top: -2px;
+        }
+
+        /* QUOTE BOX */
+        .quote-box {
+            background-color: rgba(212, 175, 55, 0.05);
+            border-left: 3px solid var(--accent-gold);
+            padding: 15px;
+            border-radius: 4px;
+            font-style: italic;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-top: 15px;
+        }
+
+        /* TABLES */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-weight: bold;
+            padding: 12px 16px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--card-border);
+            line-height: 1.4;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #F8F9FB;
+        }
+
+        /* PROCESS FLOW */
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .process-step {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 20px;
+            flex: 1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 280px;
+        }
+
+        .step-badge {
+            color: var(--accent-gold);
+            font-weight: bold;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .step-file {
+            font-family: monospace;
+            background-color: var(--bg-light);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            display: inline-block;
+            align-self: flex-start;
+        }
+
+        .step-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .step-list li {
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .step-list li::before {
+            content: "•";
+            color: var(--accent-gold);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        /* 2x2 GRID */
+        .grid-2x2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .grid-card-title {
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 8px;
+        }
+
+        .grid-card p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-dark);
+        }
+
+        /* TERMINAL EMULATOR */
+        .terminal-emulator {
+            background-color: #1e1e24;
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .terminal-header {
+            background-color: #2d2d34;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-header .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot.red { background-color: var(--red-accent); }
+        .dot.yellow { background-color: var(--accent-gold); }
+        .dot.green { background-color: var(--green-accent); }
+
+        .terminal-title {
+            color: #999;
+            font-size: 0.75rem;
+            margin-left: 10px;
+        }
+
+        .terminal-body {
+            padding: 15px;
+            color: #f1f1f1;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            min-height: 250px;
+        }
+
+        .prompt { color: var(--green-accent); }
+        .output-green { color: var(--green-accent); }
+        .output-cyan { color: var(--blue-accent); }
+        .output-red { color: var(--red-accent); }
+
+        /* KPI CARDS */
+        .kpi-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .kpi-card {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 250px;
+        }
+
+        .kpi-val {
+            font-family: var(--font-title);
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+
+        .kpi-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            color: var(--bg-dark);
+        }
+
+        .kpi-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        /* CHART SLIDE LAYOUT */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .chart-visual-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 30px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chart-title-inner {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--bg-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+
+        .horizontal-bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chart-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bar-label {
+            width: 130px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .bar-track {
+            flex-grow: 1;
+            background-color: var(--bg-light);
+            height: 24px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background-color: var(--accent-gold);
+            transition: width 1s ease;
+        }
+
+        .bar-fill.credit-card { background-color: #1A2232; }
+        .bar-fill.boleto { background-color: var(--accent-gold); }
+        .bar-fill.vouchers { background-color: var(--blue-accent); }
+        .bar-fill.debit-card { background-color: var(--text-muted); }
+
+        .bar-pct {
+            font-size: 0.8rem;
+            font-weight: bold;
+            width: 60px;
+        }
+
+        /* FOOTER & CONTROLS */
+        .slide-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 15px;
+            margin-top: 25px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .slide.dark .slide-footer {
+            border-top-color: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .slide-intro {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        /* PRESENTATION CONTROL CONTROLS */
+        .nav-controls {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 12px;
+            z-index: 150;
+        }
+
+        .nav-btn {
+            background-color: var(--sidebar-bg);
+            color: var(--text-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:hover {
+            background-color: var(--accent-gold);
+            color: var(--bg-dark);
+            border-color: var(--accent-gold);
+        }
+
+        /* TRANSITIONS SPECIFIC */
+        .slide-content-body {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-wrapper">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div>
+                <div class="sidebar-logo">OLIST PAYMENTS</div>
+                <div class="sidebar-menu">
+                    
+        <div class="sidebar-item" data-slides="2,3,4">
+            <span class="num">01</span>
+            <span class="name">Contexto</span>
+        </div>
+        <div class="sidebar-item" data-slides="5,6,7">
+            <span class="num">02</span>
+            <span class="name">Ingeniería</span>
+        </div>
+        <div class="sidebar-item" data-slides="8,9">
+            <span class="num">03</span>
+            <span class="name">Validación</span>
+        </div>
+        <div class="sidebar-item" data-slides="10,11,12,13">
+            <span class="num">04</span>
+            <span class="name">Análisis</span>
+        </div>
+        <div class="sidebar-item" data-slides="14,15,16,17">
+            <span class="num">05</span>
+            <span class="name">Síntesis</span>
+        </div>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                Proyecto Integrador<br>
+                DPL1046 · UDLA<br>
+                <strong style="color: var(--accent-gold);">Versión v2.0 (AntiGravity)</strong>
+            </div>
+        </div>
+
+        <!-- Slides Wrapper -->
+        <div class="slides-container">
+            
+        <!-- Slide 1 -->
+        <div class="slide active dark title-slide" data-index="1" data-section="01">
+            <div class="slide-container">
+                
+                <div class="slide-content-body">
+                    
+        <div class="logo-udla">Universidad de Las Américas</div>
+        <h1 class="main-title">Análisis de Métodos de Pago en Olist</h1>
+        <p class="subtitle">Pipeline de Datos ETL 100% Local en Python — Examen Integrador DPL1046</p>
+        <div class="meta-container">
+            <div class="meta-item"><strong>Presentan:</strong> Mijael Inostroza · Ashley Toloza · Felipe Vallejos · Pablo Villegas</div>
+            <div class="meta-item"><strong>Fecha:</strong> 07-jul-2026 (Presentación Oficial)</div>
+            <div class="meta-item"><strong>Código:</strong> <span class="repo-link">ashley-toloza/pipeline-analisis-pagos (commit 04443f3)</span></div>
+        </div>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">1 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide dark divider-slide" data-index="2" data-section="01">
+            <div class="slide-container">
+                
+                <div class="slide-content-body">
+                    
+        <div class="section-num">01 / CONTEXTO</div>
+        <h2 class="section-title">El Problema de Negocio</h2>
+        <p class="section-desc">Entendiendo las brechas de visibilidad financiera en el ecosistema ecommerce de Olist Brasil.</p>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">2 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="slide light" data-index="3" data-section="01">
+            <div class="slide-container">
+                <h2 class="slide-title">La falta de visibilidad en transacciones frena decisiones financieras y comerciales</h2>
+                <div class="slide-content-body">
+                    
+        <div class="split-grid">
+            <div class="split-col">
+                <div class="card-header border-red">EL DESAFÍO DE OLIST</div>
+                <ul class="bullet-list">
+                    <li>Olist procesa más de 100,000 transacciones de pago, pero carece de una plataforma consolidada para auditar y monitorear sus canales de cobro de forma automatizada.</li>
+                    <li><strong>Comercial</strong> no cuenta con datos duros sobre métodos de pago preferidos para renegociar comisiones con bancos y pasarelas de pago.</li>
+                    <li><strong>Finanzas</strong> requiere entender los pagos en cuotas (installments) para mitigar el riesgo crediticio y proyectar el flujo de caja.</li>
+                </ul>
+            </div>
+            <div class="split-col">
+                <div class="card-header border-green">LA SOLUCIÓN AUTOMATIZADA</div>
+                <ul class="bullet-list">
+                    <li>Desarrollo de un pipeline ETL local modular en Python que ingesta, limpia, une y consolida los datos crudos de transacciones.</li>
+                    <li>Elimina por completo las tareas manuales y repetitivas en Excel, asegurando <strong>idempotencia</strong>, registro de logs robusto y contratos de calidad de datos.</li>
+                </ul>
+                <div class="quote-box">
+                    "Convertimos datos de pagos crudos y aislados en un reporte ejecutivo automático y confiable sobre cómo, cuánto y dónde pagan los clientes de Olist."
+                </div>
+            </div>
+        </div>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">3 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 4 -->
+        <div class="slide light" data-index="4" data-section="01">
+            <div class="slide-container">
+                <h2 class="slide-title">Integración de tres datasets clave de Olist para superar el mínimo académico</h2>
+                <div class="slide-content-body">
+                    
+        <p class="slide-intro">Cruzamos de forma relacional las tres tablas usando <code>order_id</code> y <code>customer_id</code> para lograr un análisis multidimensional unificado:</p>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Archivo CSV</th>
+                        <th>Registros Crudos</th>
+                        <th>Atributos Clave</th>
+                        <th>Propósito en el Pipeline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>olist_order_payments_dataset.csv</strong></td>
+                        <td>103.886</td>
+                        <td>payment_type, payment_value, payment_installments</td>
+                        <td>Base de transacciones, montos, cuotas y tipos de pago.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>olist_orders_dataset.csv</strong></td>
+                        <td>99.441</td>
+                        <td>order_id, customer_id, order_status</td>
+                        <td>Estado de la orden (para aislar canceladas y determinar órdenes críticas).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>olist_customers_dataset.csv</strong></td>
+                        <td>99.441</td>
+                        <td>customer_id, customer_state</td>
+                        <td>Ubicación geográfica del cliente para análisis regional (27 estados).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">4 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 5 -->
+        <div class="slide dark divider-slide" data-index="5" data-section="02">
+            <div class="slide-container">
+                
+                <div class="slide-content-body">
+                    
+        <div class="section-num">02 / INGENIERÍA</div>
+        <h2 class="section-title">Arquitectura y Diseño de Datos</h2>
+        <p class="section-desc">Estructura del pipeline modular, desacoplado y robusto desarrollado bajo principios de ingeniería de datos.</p>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">5 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 6 -->
+        <div class="slide light" data-index="6" data-section="02">
+            <div class="slide-container">
+                <h2 class="slide-title">Pipeline desacoplado en tres capas modulares ejecutables localmente</h2>
+                <div class="slide-content-body">
+                    
+        <div class="process-flow">
+            <div class="process-step">
+                <div class="step-badge">01 / INGESTA</div>
+                <div class="step-file"><code>src/extract.py</code></div>
+                <ul class="step-list">
+                    <li>Lectura resiliente de archivos CSV locales mediante configuración externa en YAML.</li>
+                    <li>Mecanismo de reintentos con <strong>backoff exponencial</strong> para la API externa de tipo de cambio.</li>
+                    <li>Validación física de la existencia de fuentes de entrada.</li>
+                </ul>
+            </div>
+            <div class="arrow">➔</div>
+            <div class="process-step">
+                <div class="step-badge">02 / TRANSFORMACIÓN</div>
+                <div class="step-file"><code>src/transform.py / src/pipeline.py</code></div>
+                <ul class="step-list">
+                    <li>Aislamiento estricto de transacciones corruptas (montos negativos o cuotas menores a 1).</li>
+                    <li>Filtrado preventivo de órdenes canceladas para evitar distorsiones.</li>
+                    <li>Conversión monetaria dinámica a pesos chilenos (CLP).</li>
+                </ul>
+            </div>
+            <div class="arrow">➔</div>
+            <div class="process-step">
+                <div class="step-badge">03 / SALIDA</div>
+                <div class="step-file"><code>main.py / SQLite DB</code></div>
+                <ul class="step-list">
+                    <li>Generación de reportes limpios en CSV exportados a la carpeta de salida.</li>
+                    <li>Persistencia relacional estructurada en una base de datos local SQLite.</li>
+                    <li>Mecanismo de resguardo por <strong>idempotencia</strong> para evitar reprocesamientos innecesarios.</li>
+                </ul>
+            </div>
+        </div>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">6 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 7 -->
+        <div class="slide light" data-index="7" data-section="02">
+            <div class="slide-container">
+                <h2 class="slide-title">Pilares de ingeniería aplicados para asegurar calidad y robustez del código</h2>
+                <div class="slide-content-body">
+                    
+        <div class="grid-2x2">
+            <div class="grid-card">
+                <div class="grid-card-title">VALIDACIÓN: CONTRATOS DE DATOS</div>
+                <p>En <code>transform.py</code> aplicamos aserciones estrictas (<code>assert</code>) sobre tipos, presencia de columnas esenciales, y rangos lógicos (montos y cuotas > 0). Esto frena el procesamiento ante cualquier anomalía estructural.</p>
+            </div>
+            <div class="grid-card">
+                <div class="grid-card-title">ERRORES: CAPTURA ESPECÍFICA</div>
+                <p>Evitamos bloques <code>try-except</code> genéricos. Capturamos excepciones explícitas por capa (<code>FileNotFoundError</code> en extracción, <code>ValueError/KeyError</code> en transformación) y las registramos de forma jerárquica con logs.</p>
+            </div>
+            <div class="grid-card">
+                <div class="grid-card-title">SEGURIDAD: CONFIGURACIÓN EXTERNA</div>
+                <p>Configuramos los parámetros del sistema (rutas de archivos, URLs de APIs, configuraciones de fallback) en un archivo yaml independiente. Esto elimina secretos del código y facilita la portabilidad entre entornos.</p>
+            </div>
+            <div class="grid-card">
+                <div class="grid-card-title">TESTING: COBERTURA AUTOMATIZADA</div>
+                <p>Implementación de un conjunto de <strong>3 pruebas unitarias con pytest</strong>, automatizando la verificación de datos sucios aislados, filtrado de canceladas y validación estructural de tipos y columnas.</p>
+            </div>
+        </div>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">7 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 8 -->
+        <div class="slide dark divider-slide" data-index="8" data-section="03">
+            <div class="slide-container">
+                
+                <div class="slide-content-body">
+                    
+        <div class="section-num">03 / VALIDACIÓN</div>
+        <h2 class="section-title">Demostración del Pipeline</h2>
+        <p class="section-desc">Ejecución del pipeline en consola, validación de logs, tests automáticos y control de duplicación.</p>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">8 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 9 -->
+        <div class="slide light" data-index="9" data-section="03">
+            <div class="slide-container">
+                <h2 class="slide-title">Ejecución simulada en vivo: Pruebas, Ingesta con Backoff e Idempotencia</h2>
+                <div class="slide-content-body">
+                    
+        <div class="split-grid">
+            <div class="split-col">
+                <div class="terminal-emulator">
+                    <div class="terminal-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="terminal-title">Terminal - Pipeline Olist</span>
+                    </div>
+                    <div class="terminal-body" style="font-size: 0.75rem; line-height: 1.3;">
+                        <span class="prompt">$</span> python -m pytest tests/<br>
+                        <span class="output-green">
+✔ test_aislamiento_datos_sucios PASSED<br>
+✔ test_filtrado_ordenes_canceladas PASSED<br>
+✔ test_comportamiento_tipos_y_columnas PASSED</span><br>
+                        <span class="output-green"><b>====== 3 passed in 1.25s ======</b></span><br>
+                        <span class="prompt">$</span> python main.py<br>
+                        <span class="output-cyan">INFO  | 🔐 Archivo .env detectado. Resguardando credenciales...</span><br>
+                        <span class="output-cyan">INFO  | Ingesta: Los 3 datasets de Olist cargados exitosamente.</span><br>
+                        <span class="output-green">SUCCESS | API de cambio: 1 BRL ≈ $175.12 CLP</span><br>
+                        <span class="output-cyan">INFO  | Calidad: Se aislaron 11 filas inválidas de pagos.</span><br>
+                        <span class="output-green">SUCCESS | SQLite: Tablas de base de datos estructuradas con éxito.</span><br>
+                        <span class="output-green">SUCCESS | DB AUDIT PASSED: Archivo 'olist_analytics.db' verificado.</span><br>
+                        <span class="prompt">$</span> python main.py<br>
+                        <span class="output-red">WARNING | El reporte ejecutivo ya existe. Deteniendo ejecución.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="split-col">
+                <div class="card-header border-gold">CONTROL DE FLUJO Y CALIDAD</div>
+                <ul class="bullet-list">
+                    <li><strong>3 Tests Unitarios en verde:</strong> Garantizan el filtrado estricto de canceladas, la limpieza de anomalías y el comportamiento de tipos y columnas.</li>
+                    <li><strong>Aislamiento de Registros Sucios:</strong> Se detectan y extraen 11 filas defectuosas para auditoría sin detener el flujo general del negocio.</li>
+                    <li><strong>Idempotencia Validada:</strong> El guard integrado en el script principal evita reprocesar y malgastar recursos de cómputo si el reporte ya está generado.</li>
+                </ul>
+            </div>
+        </div>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">9 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 10 -->
+        <div class="slide dark divider-slide" data-index="10" data-section="04">
+            <div class="slide-container">
+                
+                <div class="slide-content-body">
+                    
+        <div class="section-num">04 / ANÁLISIS</div>
+        <h2 class="section-title">Hallazgos Cuantitativos</h2>
+        <p class="section-desc">Métricas consolidadas de negocio, dominancia del crédito, financiamiento de compras y asimetrías regionales.</p>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">10 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 11 -->
+        <div class="slide light" data-index="11" data-section="04">
+            <div class="slide-container">
+                <h2 class="slide-title">Tres hallazgos cuantitativos: El crédito domina y la geografía manda</h2>
+                <div class="slide-content-body">
+                    
+<div class="kpi-container">
+    <div class="kpi-card">
+        <div class="kpi-val">73.97%</div>
+        <div class="kpi-title">DOMINANCIA DEL CRÉDITO</div>
+        <div class="kpi-desc">
+            • Representa 76,349 de las 103,214 transacciones válidas analizadas.<br>
+            • Ticket promedio de $163.00 BRL, significativamente superior al de los otros métodos.
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-val">3.5 Cuotas</div>
+        <div class="kpi-title">COMPRAS DIFERIDAS</div>
+        <div class="kpi-desc">
+            • Promedio nacional de 3.5 cuotas mensuales para tarjetas de crédito.<br>
+            • Finanzas debe monitorear el riesgo de liquidez y negociar plazos de pago.
+        </div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-val">AM vs RR</div>
+        <div class="kpi-title">BRECHA REGIONAL</div>
+        <div class="kpi-desc">
+            • <strong>Amazonas (AM):</strong> 80.52% de compras financiadas con tarjeta.<br>
+            • <strong>Roraima (RR):</strong> 28.89% de pagos con Boleto Bancario (mínima bancarización digital).
+        </div>
+    </div>
+</div>
+
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">11 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 12 -->
+        <div class="slide light" data-index="12" data-section="04">
+            <div class="slide-container">
+                <h2 class="slide-title">La Tarjeta de Crédito aplasta a las demás formas de pago</h2>
+                <div class="slide-content-body">
+                    
+<div class="chart-grid">
+    <div class="chart-visual-container">
+        <div class="chart-title-inner">Participación por volumen de transacciones (%)</div>
+        <div class="horizontal-bar-chart">
+            <div class="chart-bar-row">
+                <span class="bar-label">Tarjeta de Crédito</span>
+                <div class="bar-track"><div class="bar-fill credit-card" style="width: 73.97%;"></div></div>
+                <span class="bar-pct">73.97%</span>
+            </div>
+            <div class="chart-bar-row">
+                <span class="bar-label">Boleto Bancario</span>
+                <div class="bar-track"><div class="bar-fill boleto" style="width: 19.08%;"></div></div>
+                <span class="bar-pct">19.08%</span>
+            </div>
+            <div class="chart-bar-row">
+                <span class="bar-label">Vouchers (Cupones)</span>
+                <div class="bar-track"><div class="bar-fill vouchers" style="width: 5.48%;"></div></div>
+                <span class="bar-pct">5.48%</span>
+            </div>
+            <div class="chart-bar-row">
+                <span class="bar-label">Tarjeta de Débito</span>
+                <div class="bar-track"><div class="bar-fill debit-card" style="width: 1.47%;"></div></div>
+                <span class="bar-pct">1.47%</span>
+            </div>
+        </div>
+    </div>
+    <div class="split-col">
+        <div class="card-header border-gold">DESGLOSE DE TRANSACCIONES</div>
+        <table style="font-size: 0.75rem;">
+            <thead>
+                <tr>
+                    <th>Método</th>
+                    <th>Transacciones</th>
+                    <th>Participación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tarjeta Crédito</td>
+                    <td>76.349</td>
+                    <td>73.97%</td>
+                </tr>
+                <tr>
+                    <td>Boleto Bancario</td>
+                    <td>19.689</td>
+                    <td>19.08%</td>
+                </tr>
+                <tr>
+                    <td>Vouchers</td>
+                    <td>5.654</td>
+                    <td>5.48%</td>
+                </tr>
+                <tr>
+                    <td>Tarjeta Débito</td>
+                    <td>1.522</td>
+                    <td>1.47%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">12 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 13 -->
+        <div class="slide light" data-index="13" data-section="04">
+            <div class="slide-container">
+                <h2 class="slide-title">Desarrollo liderado por humanos con la IA como copiloto controlado</h2>
+                <div class="slide-content-body">
+                    
+        <div class="split-grid">
+            <div class="split-col">
+                <div class="card-header border-blue">DÓNDE NOS ASISTIÓ LA IA</div>
+                <ul class="bullet-list">
+                    <li><strong>Estructura Base (Boilerplate):</strong> Esbozo inicial del flujo de módulos en carpetas limpias (src/, tests/).</li>
+                    <li><strong>Manejo de Excepciones:</strong> Plantillas base para estructurar los bloques try-except específicos por capa.</li>
+                    <li><strong>Configuración de Logs:</strong> Estructura y formato para la salida por consola con loguru.</li>
+                    <li><strong>Generación de Tests:</strong> Creación de fixtures iniciales en pytest para simular datos inválidos.</li>
+                </ul>
+            </div>
+            <div class="split-col">
+                <div class="card-header border-gold">EL CONTROL TÉCNICO DEL GRUPO</div>
+                <ul class="bullet-list">
+                    <li><strong>Corrección de Bug en Exportación:</strong> Identificamos y corregimos la pérdida de la columna <code>payment_type</code> en la agrupación final de datos.</li>
+                    <li><strong>Lógica Analítica Avanzada:</strong> Diseñamos la lógica de agregación e indexación compleja (<code>idxmax</code>) para obtener el porcentaje exacto de Boletos en Roraima.</li>
+                    <li><strong>Diseño de la Arquitectura:</strong> Implementación de contratos preventivos con aserciones y lógicas de persistencia relacional en SQLite.</li>
+                </ul>
+            </div>
+        </div>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">13 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 14 -->
+        <div class="slide dark divider-slide" data-index="14" data-section="05">
+            <div class="slide-container">
+                
+                <div class="slide-content-body">
+                    
+        <div class="section-num">05 / SÍNTESIS</div>
+        <h2 class="section-title">Valor del Negocio y Aprendizajes</h2>
+        <p class="section-desc">Impacto estratégico de la automatización y reflexiones individuales del equipo.</p>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">14 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 15 -->
+        <div class="slide light" data-index="15" data-section="05">
+            <div class="slide-container">
+                <h2 class="slide-title">Impacto estratégico: Habilitando decisiones comerciales guiadas por datos</h2>
+                <div class="slide-content-body">
+                    
+        <div class="split-grid">
+            <div class="split-col">
+                <div class="card-header border-green">ACCIONES COMERCIALES Y DE NEGOCIO</div>
+                <ul class="bullet-list">
+                    <li><strong>Negociación agresiva con emisores:</strong> Con datos consolidados que demuestran la dominancia de tarjetas, Olist puede renegociar comisiones con bancos clave para aumentar márgenes de ganancia.</li>
+                    <li><strong>Campañas de Inclusión en el Norte:</strong> Dirigir promociones de Boleto Bancario o incentivar la bancarización digital en estados rezagados como Roraima.</li>
+                    <li><strong>Eficiencia Operativa Absoluta:</strong> La automatización local del pipeline elimina horas hombre perdidas en procesar archivos gigantes en Excel.</li>
+                </ul>
+            </div>
+            <div class="split-col">
+                <div class="card-header border-blue">PROPUESTA DE ESCALABILIDAD FUTURA</div>
+                <div class="quote-box" style="margin-top: 10px;">
+                    <strong>Fase 2 Recomendada:</strong><br>
+                    Migrar el pipeline local a una arquitectura Cloud serverless (AWS Lambda / Google Cloud Functions) con almacenamiento analítico en BigQuery o Snowflake, y automatizar ejecuciones mediante Apache Airflow para un monitoreo en tiempo real de las finanzas de Olist.
+                </div>
+            </div>
+        </div>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">15 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 16 -->
+        <div class="slide light" data-index="16" data-section="05">
+            <div class="slide-container">
+                <h2 class="slide-title">Lecciones clave: De código suelto a ingeniería de datos productiva</h2>
+                <div class="slide-content-body">
+                    
+<div class="split-grid">
+    <div class="split-col">
+        <div class="card-header border-blue">REFLEXIONES DE INGENIERÍA Y ARQUITECTURA</div>
+        <div class="quote-box">
+            "El principal reto del diseño fue estructurar un pipeline modular saliendo del esquema de scripts sueltos, aplicando un control estricto de idempotencia y garantizando la calidad relacional."
+        </div>
+        <ul class="bullet-list" style="font-size: 0.8rem;">
+            <li>Los contratos de datos garantizan la consistencia analítica y aíslan registros corruptos.</li>
+            <li>La idempotencia y el desacoplamiento de rutas (YAML) previenen reprocesamientos costosos.</li>
+        </ul>
+    </div>
+    <div class="split-col">
+        <div class="card-header border-gold">REFLEXIONES DE QA Y ANALÍTICA DE NEGOCIO</div>
+        <div class="quote-box">
+            "Diseñar la suite de pruebas automatizadas con pytest e integrar el componente de IA Claude nos enseñó a certificar la calidad de los datos antes de generar valor y decisiones."
+        </div>
+        <ul class="bullet-list" style="font-size: 0.8rem;">
+            <li>Las pruebas unitarias y fixtures aseguran la reproducibilidad del pipeline.</li>
+            <li>La IA y su fallback actúan como copilotos estratégicos confiables para la gerencia.</li>
+        </ul>
+    </div>
+</div>
+
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">16 / 17</span>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 17 -->
+        <div class="slide dark title-slide" data-index="17" data-section="05">
+            <div class="slide-container">
+                
+                <div class="slide-content-body">
+                    
+        <div class="logo-udla">Examen Integrador · DPL1046</div>
+        <h1 class="main-title" style="font-size: 3.5rem; margin-bottom: 20px;">¡Muchas gracias!</h1>
+        <p class="subtitle" style="font-size: 1.5rem; margin-bottom: 40px;">Quedamos atentos a sus preguntas y comentarios.</p>
+        <div class="meta-container" style="justify-content: center; gap: 40px;">
+            <div class="meta-item" style="font-size: 1.2rem;"><strong>Exponentes:</strong> Mijael Inostroza · Ashley Toloza · Felipe Vallejos · Pablo Villegas</div>
+        </div>
+        
+                </div>
+                <div class="slide-footer">
+                    <span class="footer-left">Diplomado en Ingeniería de Datos con Python · Universidad de Las Américas</span>
+                    <span class="footer-right">17 / 17</span>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Float Controls -->
+        <div class="nav-controls">
+            <button class="nav-btn" id="prev-btn">◀</button>
+            <button class="nav-btn" id="next-btn">▶</button>
+        </div>
+    </div>
+
+    <!-- PRESENTATION NAVIGATION JAVASCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            let currentSlide = 1;
+            const totalSlides = slides.length;
+
+            function showSlide(index) {
+                if (index < 1 || index > totalSlides) return;
+                
+                // Remove active class from all slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                
+                // Add active class to target slide
+                const targetSlide = document.querySelector(`.slide[data-index="${index}"]`);
+                if (targetSlide) {
+                    targetSlide.classList.add('active');
+                    
+                    // Highlight the corresponding sidebar item
+                    const section = targetSlide.getAttribute('data-section');
+                    sidebarItems.forEach(item => {
+                        const ranges = item.getAttribute('data-slides').split(',').map(Number);
+                        if (ranges.includes(index)) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                }
+                
+                currentSlide = index;
+            }
+
+            // Event Listeners for Buttons
+            prevBtn.addEventListener('click', () => {
+                if (currentSlide > 1) showSlide(currentSlide - 1);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide < totalSlides) showSlide(currentSlide + 1);
+            });
+
+            // Sidebar click events
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const slidesInSec = item.getAttribute('data-slides').split(',').map(Number);
+                    // Show first slide of that section
+                    showSlide(slidesInSec[0]);
+                });
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                    if (currentSlide < totalSlides) showSlide(currentSlide + 1);
+                } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+                    if (currentSlide > 1) showSlide(currentSlide - 1);
+                } else if (e.key === 'Home') {
+                    showSlide(1);
+                } else if (e.key === 'End') {
+                    showSlide(totalSlides);
+                } else if (e.key.toLowerCase() === 'f') {
+                    // Enter fullscreen
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(err => {
+                            console.log(`Error: ${err.message}`);
+                        });
+                    } else {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+
+            // Initialise first slide
+            showSlide(1);
+        });
+    </script>
+</body>
+</html>
