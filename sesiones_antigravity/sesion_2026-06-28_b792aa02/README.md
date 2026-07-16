@@ -1,5 +1,4 @@
 # Sesión de Antigravity — b792aa02
-
 - **ID Completo:** `b792aa02-2a9f-42f3-b6e1-56d657a831c0`
 - **Fecha:** 2026-06-28 14:25:12 UTC
 
@@ -136,6 +135,8 @@ I need the .html version of this .pbix
 | `manage_task` | "Manage task" |
 | `replace_file_content` | "Replace file content" |
 | `write_to_file` | "Write to file" |
+
+## 📄 Artefactos Generados
 
 ## 📄 Artefactos Generados
 

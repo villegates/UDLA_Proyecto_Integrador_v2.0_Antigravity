@@ -1,5 +1,4 @@
 # Sesión de Antigravity — 583b01eb
-
 - **ID Completo:** `583b01eb-2802-4d7e-a37f-34b9fa45316e`
 - **Fecha:** 2026-06-27 12:26:30 UTC
 
@@ -153,6 +152,8 @@ We need to filter by contractor and what deliverables have to be reviewed by HCH
 | `browser_subagent` | "Open browser to verify global filters" |
 | `manage_task` | "Stop background HTTP server" |
 | `replace_file_content` | "Update walkthrough documentation file" |
+
+## 📄 Artefactos Generados
 
 ## 📄 Artefactos Generados
 

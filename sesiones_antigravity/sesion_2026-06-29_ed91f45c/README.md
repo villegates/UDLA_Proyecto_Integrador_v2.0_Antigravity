@@ -1,5 +1,4 @@
 # Sesión de Antigravity — ed91f45c
-
 - **ID Completo:** `ed91f45c-ba2d-457b-b361-29c4b46dd80b`
 - **Fecha:** 2026-06-29 01:56:53 UTC
 
@@ -222,6 +221,8 @@ Where did you save the .md file?
 | `run_command` | "Run inspect_revisions.py" |
 | `write_to_file` | "Create project_memory.md artifact" |
 | `write_to_file` | "Save project_memory.md to workspace" |
+
+## 📄 Artefactos Generados
 
 ## 📄 Artefactos Generados
 
