@@ -1,0 +1,5 @@
+- [x] Crear el script de extracción y formateo en Python (`backup_sessions.py`).
+- [/] Ejecutar el script para generar la carpeta `sesiones_antigravity` con los reportes e índice.
+- [ ] Verificar localmente que los archivos se hayan generado y estructurado correctamente.
+- [ ] Agregar los archivos a Git, confirmar el commit y subirlos (push) al repositorio remoto de GitHub.
+- [ ] Crear el reporte de cierre (`walkthrough.md`) detallando lo completado.

@@ -1,0 +1,6 @@
+- [x] Translate Spanish terms and add `milestones` dictionary in `process_pbi_data.py`
+- [x] Remove old tabs (Matrix, List) and add "Skyline View" tab in `dashboard_template.html`
+- [x] Implement Skyline interactive grid drawing in Javascript
+- [x] Implement dynamic project-based filter toggles in Javascript
+- [x] Localize all UI texts and drawer headers to English in `dashboard_template.html`
+- [x] Run preprocessing and compilation, then verify results in browser
