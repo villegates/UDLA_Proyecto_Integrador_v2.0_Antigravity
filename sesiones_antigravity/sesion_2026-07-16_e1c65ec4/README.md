@@ -89,6 +89,15 @@ Sube toda la memoria en un archivo .md y dejalo arriba en GitHub
 | `view_file` | "View backup script" |
 | `view_file` | "View backup script end" |
 | `write_to_file` | "Update backup script" |
+| `run_command` | "Run backup script" |
+| `view_file` | "View consolidated memory" |
+| `run_command` | "Git status check" |
+| `run_command` | "Git add all" |
+| `run_command` | "Git commit consolidated" |
+| `run_command` | "Git push consolidated" |
+| `run_command` | "Git status check final" |
+| `view_file` | "View walkthrough file" |
+| `replace_file_content` | "Update walkthrough file" |
 
 ## 📄 Artefactos Generados
 

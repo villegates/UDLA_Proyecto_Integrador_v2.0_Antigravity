@@ -9,6 +9,7 @@ Hemos completado exitosamente la extracción, estructuración y subida de todo t
    - Este script escanea recursivamente la carpeta interna de Antigravity, lee las transcripciones en formato JSONL y genera reportes en formato Markdown.
 
 2. **Generación del respaldo local:**
+   - Se creó el archivo consolidado [MEMORIA_COMPLETA_SESIONES.md](file:///c:/Users/Pablo%20Villegas/OneDrive/Documents/Claude/UDLA/Modulo%202/Antigravity/MEMORIA_COMPLETA_SESIONES.md) en la raíz del repositorio, conteniendo todo el historial acumulado en un solo documento estructurado.
    - Se creó el directorio [sesiones_antigravity](file:///c:/Users/Pablo%20Villegas/OneDrive/Documents/Claude/UDLA/Modulo%202/Antigravity/sesiones_antigravity) con los siguientes archivos:
      - Un índice general [README.md](file:///c:/Users/Pablo%20Villegas/OneDrive/Documents/Claude/UDLA/Modulo%202/Antigravity/sesiones_antigravity/README.md) conteniendo la tabla de todas las sesiones registradas con sus respectivas fechas y prompts iniciales.
      - Subcarpetas individuales para cada sesión (`sesion_<FECHA>_<ID_CORTO>`) conteniendo:
@@ -18,8 +19,8 @@ Hemos completado exitosamente la extracción, estructuración y subida de todo t
 
 3. **Subida a GitHub:**
    - Se configuraron los datos de identidad locales para Git.
-   - Se realizó el commit con todo el historial de sesiones.
-   - Ejecutaste el push desde la terminal local para autenticar con Git Credential Manager, subiendo de forma segura todos los archivos al repositorio remoto en GitHub: `https://github.com/villegates/UDLA_Proyecto_Integrador_v2.0_Antigravity.git`.
+   - Se realizó el commit con todo el historial de sesiones y el archivo unificado en la raíz.
+   - Se subieron los archivos al repositorio remoto en GitHub: `https://github.com/villegates/UDLA_Proyecto_Integrador_v2.0_Antigravity.git`.
 
 ---
 
